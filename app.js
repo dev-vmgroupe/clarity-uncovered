@@ -95,6 +95,15 @@ function updateManifesto() {
       rotate = 0;
     }
 
+    if (index === manifestoLines.length - 2 && exact > manifestoLines.length - 2.05) {
+      visibility = Math.max(0, 1 - smoothValue(manifestoLines.length - 2.05, manifestoLines.length - 1.48, exact));
+      blur = 34 * (1 - visibility);
+      y = -34 * (1 - visibility);
+      z = -90 * (1 - visibility);
+      scale = 0.98 + visibility * 0.02;
+      rotate = 0;
+    }
+
     line.classList.toggle("is-active", distance <= crispHold);
     line.style.opacity = visibility.toFixed(3);
     line.style.filter = `blur(${blur.toFixed(2)}px)`;
@@ -281,13 +290,14 @@ const createDeviceScene = () => {
       blending: THREE.AdditiveBlending,
     }),
   );
-  redGlowSprite.position.set(0, -0.36, 0.82);
+  redGlowSprite.position.set(0, -0.36, 0.9);
   redGlowSprite.scale.set(0.7, 0.7, 0.7);
 
   const loader = new GLTFLoader();
   let modelLoaded = false;
   const redMaterials = [];
   const glowMaterials = [];
+  let modelRoot = null;
 
   const softenMaterial = (material) => {
     if (!material) return;
@@ -315,6 +325,7 @@ const createDeviceScene = () => {
     "./3d/Meshy_AI_Red_LED_Medical_Strob_0501200944_texture.glb",
     (gltf) => {
       const model = gltf.scene;
+      modelRoot = model;
       const box = new THREE.Box3().setFromObject(model);
       const size = new THREE.Vector3();
       const center = new THREE.Vector3();
@@ -339,7 +350,7 @@ const createDeviceScene = () => {
       });
 
       group.add(model);
-      group.add(redGlowSprite);
+      model.add(redGlowSprite);
       modelLoaded = true;
       canvas.classList.add("is-loaded");
     },
@@ -373,8 +384,10 @@ const createDeviceScene = () => {
     const mobile = window.innerWidth < 680;
     const heroicSection = document.querySelector(".heroic-showcase");
     const matureSection = document.querySelector(".mature-visual");
+    const footer = document.querySelector(".site-footer");
     const inHeroic = isSectionActive(heroicSection, window.innerHeight * 0.08);
     const inMature = isSectionActive(matureSection, window.innerHeight * 0.12);
+    const inFooter = isSectionActive(footer, window.innerHeight * 0.02);
     const inManifesto = manifesto
       ? manifesto.getBoundingClientRect().top < window.innerHeight &&
         manifesto.getBoundingClientRect().bottom > 0
@@ -385,11 +398,13 @@ const createDeviceScene = () => {
     const matureProgress = sectionProgress(matureSection);
     const matureTravel = smoothstep(0.12, 0.9, matureProgress);
     const maturePresence = inMature ? smoothstep(0.08, 0.22, matureProgress) * (1 - smoothstep(0.84, 0.98, matureProgress)) : 0;
+    const footerProgress = sectionProgress(footer);
+    const footerPresence = inFooter ? smoothstep(0.02, 0.32, footerProgress) : 0;
     const topHero = 1 - smoothstep(0.52, 1.05, viewportProgress);
     const heroPresence = topHero * 0.86;
     const heroicSuppression = inHeroic ? 1 - smoothstep(0.02, 0.16, sectionProgress(heroicSection)) * (1 - smoothstep(0.86, 0.98, sectionProgress(heroicSection))) : 1;
-    const presence = Math.min(0.96, Math.max(heroPresence, manifestoPresence * 0.88, maturePresence * 0.92) * heroicSuppression);
-    const frontLayer = topHero > 0.08 || (inManifesto && manifestoPresence > 0.08) || (inMature && maturePresence > 0.08);
+    const presence = Math.min(0.96, Math.max(heroPresence, manifestoPresence * 0.88, maturePresence * 0.92, footerPresence * 0.86) * heroicSuppression);
+    const frontLayer = topHero > 0.08 || (inManifesto && manifestoPresence > 0.08) || (inMature && maturePresence > 0.08) || footerPresence > 0.08;
     const modelOpacity = presence > 0.16 ? Math.min(1, 0.78 + presence * 0.32) : presence * 2.2;
     root.style.setProperty("--model-presence", presence.toFixed(3));
     root.style.setProperty("--model-opacity", modelOpacity.toFixed(3));
@@ -427,6 +442,12 @@ const createDeviceScene = () => {
       targetRotY = mix(Math.PI * 1.1, Math.PI * 3.25, matureTravel);
       targetRotX = -0.22 + Math.sin(matureTravel * Math.PI * 1.2) * 0.34;
       targetRotZ = mix(0.22, -0.26, matureTravel);
+    } else if (inFooter) {
+      targetX = mobile ? 0.72 : 1.28;
+      targetY = mobile ? -0.52 : -0.64;
+      targetRotY = Math.PI * 2.15;
+      targetRotX = -0.28;
+      targetRotZ = -0.08;
     }
 
     group.rotation.y += (targetRotY - group.rotation.y) * 0.035;
@@ -445,7 +466,9 @@ const createDeviceScene = () => {
     redGlowSprite.material.opacity += (spriteGlow - redGlowSprite.material.opacity) * 0.08;
     const spriteScale = 0.42 + facingCamera * presence * 0.72;
     redGlowSprite.scale.lerp(new THREE.Vector3(spriteScale, spriteScale, spriteScale), 0.08);
-    redGlowSprite.position.set(0, -0.36, 0.82 + facingCamera * 0.08);
+    if (modelRoot) {
+      redGlowSprite.position.set(0, -0.36, 0.9 + facingCamera * 0.08);
+    }
     redMaterials.forEach((material) => {
       material.emissiveIntensity = 0.45 + facingCamera * presence * 4.4;
     });
