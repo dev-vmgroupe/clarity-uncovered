@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "python3 -m http.server 4173"
+    "dev": "python3 -m http.server 4173",
+    "build": "node scripts/build-pages.mjs",
+    "predeploy": "npm run build"
+  },
+  "devDependencies": {
+    "sharp": "^0.34.5"
   }
 }
