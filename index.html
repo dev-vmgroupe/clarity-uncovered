@@ -63,18 +63,18 @@
       <section class="manifesto section-panel" id="manifesto" aria-label="Brand manifesto">
         <p class="section-kicker">Manifesto</p>
         <div class="manifesto-assets" aria-hidden="true">
-          <img src="./assets/heroic.png" alt="" />
           <img src="./assets/Screenshot 2026-05-01 at 2.19.29 PM.png" alt="" />
           <img src="./assets/Screenshot 2026-05-01 at 2.19.38 PM.png" alt="" />
           <img src="./assets/Screenshot 2026-05-01 at 2.20.01 PM.png" alt="" />
           <img src="./assets/mature.png" alt="" />
+          <img src="./assets/two.png" alt="" />
         </div>
         <div class="manifesto-lines">
           <span class="is-active">We've been hiding long enough.</span>
           <span>Under filters.</span>
           <span>Under coverups.</span>
           <span>Under the idea that good skin is something you fake.</span>
-          <span>Clear + Brilliant®changes that.</span>
+          <span>Clear + Brilliant changes that.</span>
           <span>A gentle laser treatment that works in the skin,</span>
           <span>not on top of it.</span>
           <span>Replacing what time took.</span>
@@ -87,9 +87,24 @@
           <span>and undeniably yours.</span>
           <span>Clarity isn't something you put on.</span>
           <span>It's something you uncover.</span>
-          <span>Clear + Brilliant®.</span>
+          <span>Clear + Brilliant.</span>
           <span>Nothing to hide.</span>
         </div>
+      </section>
+
+      <section class="heroic-showcase section-panel" aria-label="Clear and Brilliant device">
+        <img
+          class="heroic-device"
+          src="./assets/heroic.png"
+          alt="Clear + Brilliant laser device with red LED treatment tip"
+        />
+      </section>
+
+      <section class="mature-visual section-panel" aria-label="Clear and Brilliant treatment visual">
+        <img
+          src="./assets/mature.png"
+          alt="Clear + Brilliant laser treatment being applied to a patient's cheek"
+        />
       </section>
 
       <section class="details section-panel" id="details" aria-labelledby="details-title">
@@ -103,10 +118,10 @@
         </div>
 
         <div class="asset-cloud" aria-hidden="true">
-          <img src="./assets/heroic.png" alt="" />
           <img src="./assets/Screenshot 2026-05-01 at 2.19.29 PM.png" alt="" />
           <img src="./assets/Screenshot 2026-05-01 at 2.19.38 PM.png" alt="" />
           <img src="./assets/mature.png" alt="" />
+          <img src="./assets/two.png" alt="" />
         </div>
 
         <div class="detail-grid" aria-label="Treatment benefits">
@@ -230,9 +245,49 @@
       </section>
 
       <section class="provider section-panel" id="provider" aria-labelledby="provider-title">
-        <p class="section-kicker">Be good to glow</p>
-        <h2 id="provider-title">Connect with an aesthetic provider near you.</h2>
-        <a class="button magnetic" href="https://www.clearandbrilliant.com/#find-provider">Find a provider</a>
+        <div class="provider-copy">
+          <p class="section-kicker">Be good to glow</p>
+          <h2 id="provider-title">Find your clarity point.</h2>
+          <p>Explore nearby aesthetic providers without leaving the experience.</p>
+        </div>
+        <div class="provider-map" aria-label="Immersive provider map preview">
+          <div class="map-search">
+            <span>90210</span>
+            <strong>5 providers nearby</strong>
+          </div>
+          <button
+            class="map-pin pin-one is-selected"
+            type="button"
+            data-provider-name="Beverly Hills Laser Studio"
+            data-provider-detail="2.4 miles away. Consultation availability this week."
+          >
+            <span>01</span>
+            Beverly Hills Laser Studio
+          </button>
+          <button
+            class="map-pin pin-two"
+            type="button"
+            data-provider-name="Westside Skin Lab"
+            data-provider-detail="3.1 miles away. Evening consults available."
+          >
+            <span>02</span>
+            Westside Skin Lab
+          </button>
+          <button
+            class="map-pin pin-three"
+            type="button"
+            data-provider-name="Melrose Aesthetic House"
+            data-provider-detail="4.8 miles away. Clear + Brilliant specialists on staff."
+          >
+            <span>03</span>
+            Melrose Aesthetic House
+          </button>
+          <div class="map-card glass-card">
+            <span>Selected provider</span>
+            <strong data-map-provider>Beverly Hills Laser Studio</strong>
+            <p data-map-detail>2.4 miles away. Consultation availability this week.</p>
+          </div>
+        </div>
       </section>
     </main>
 

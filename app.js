@@ -17,6 +17,8 @@ const pointer = {
 const manifesto = document.querySelector(".manifesto");
 const manifestoLines = [...document.querySelectorAll(".manifesto-lines span")];
 const manifestoAssets = [...document.querySelectorAll(".manifesto-assets img")];
+const heroicDevice = document.querySelector(".heroic-device");
+const matureVisual = document.querySelector(".mature-visual img");
 let manifestoProgress = 0;
 
 const setPointer = (x, y) => {
@@ -47,6 +49,7 @@ const updateScroll = () => {
   const scrollable = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
   root.style.setProperty("--scroll", `${window.scrollY / scrollable}`);
   updateManifesto();
+  updateScrollVisuals();
 };
 
 updateScroll();
@@ -100,6 +103,36 @@ function updateManifesto() {
   });
 }
 
+function sectionProgress(element) {
+  if (!element) return 0;
+  const rect = element.getBoundingClientRect();
+  const travel = Math.max(1, window.innerHeight + rect.height);
+  return Math.min(1, Math.max(0, (window.innerHeight - rect.top) / travel));
+}
+
+function isSectionActive(element, offset = 0) {
+  if (!element) return false;
+  const rect = element.getBoundingClientRect();
+  return rect.top < window.innerHeight - offset && rect.bottom > offset;
+}
+
+function updateScrollVisuals() {
+  if (heroicDevice) {
+    const progress = sectionProgress(heroicDevice.closest(".heroic-showcase"));
+    const eased = 1 - Math.pow(1 - progress, 2);
+    root.style.setProperty("--heroic-scale", (0.82 + eased * 0.74).toFixed(3));
+    root.style.setProperty("--heroic-x", `${((0.5 - progress) * 28).toFixed(2)}vw`);
+    root.style.setProperty("--heroic-y", `${((0.5 - progress) * 26).toFixed(2)}vh`);
+    root.style.setProperty("--heroic-rotate", `${(-7 + progress * 14).toFixed(2)}deg`);
+  }
+
+  if (matureVisual) {
+    const progress = sectionProgress(matureVisual.closest(".mature-visual"));
+    root.style.setProperty("--mature-y", `${((0.5 - progress) * 14).toFixed(2)}vh`);
+    root.style.setProperty("--mature-scale", (1.08 - Math.abs(progress - 0.5) * 0.12).toFixed(3));
+  }
+}
+
 const revealObserver = new IntersectionObserver(
   (entries) => {
     entries.forEach((entry) => {
@@ -141,6 +174,18 @@ document.querySelectorAll(".flip-card").forEach((card) => {
 
 document.querySelectorAll(".accordion-item").forEach((item) => {
   item.addEventListener("click", () => item.classList.toggle("is-open"));
+});
+
+const mapProvider = document.querySelector("[data-map-provider]");
+const mapDetail = document.querySelector("[data-map-detail]");
+
+document.querySelectorAll(".map-pin").forEach((pin) => {
+  pin.addEventListener("click", () => {
+    document.querySelectorAll(".map-pin").forEach((item) => item.classList.remove("is-selected"));
+    pin.classList.add("is-selected");
+    if (mapProvider) mapProvider.textContent = pin.dataset.providerName || pin.textContent.trim();
+    if (mapDetail) mapDetail.textContent = pin.dataset.providerDetail || "";
+  });
 });
 
 document.querySelectorAll(".magnetic").forEach((item) => {
@@ -262,6 +307,11 @@ const createDeviceScene = () => {
     const progress = window.scrollY / scrollable;
     const viewportProgress = window.scrollY / Math.max(1, window.innerHeight);
     const mobile = window.innerWidth < 680;
+    const inHeroic = isSectionActive(document.querySelector(".heroic-showcase"), window.innerHeight * 0.08);
+    const inMature = isSectionActive(document.querySelector(".mature-visual"), window.innerHeight * 0.12);
+    const inProcess = isSectionActive(document.querySelector(".process"), window.innerHeight * 0.18);
+    const inDetails = isSectionActive(document.querySelector(".details"), window.innerHeight * 0.18);
+    const inFaq = isSectionActive(document.querySelector(".faq"), window.innerHeight * 0.18);
     const inManifesto = manifesto
       ? manifesto.getBoundingClientRect().top < window.innerHeight &&
         manifesto.getBoundingClientRect().bottom > 0
@@ -274,10 +324,17 @@ const createDeviceScene = () => {
       0.92,
       heroPresence +
         linePulse +
+        (inHeroic ? peak(sectionProgress(document.querySelector(".heroic-showcase")), 0.56, 0.24) * 0.72 : 0) +
+        (inProcess ? 0.42 : 0) +
         peak(progress, 0.7, 0.055) * 0.48,
     );
+    const frontLayer = inManifesto || inHeroic || inProcess || (!inDetails && !inMature && !inFaq && presence > 0.62);
     root.style.setProperty("--model-presence", presence.toFixed(3));
-    root.style.setProperty("--model-blur", `${((1 - presence) * 18).toFixed(2)}px`);
+    root.style.setProperty("--model-layer", frontLayer ? "4" : "-2");
+    root.style.setProperty(
+      "--model-blur",
+      `${(frontLayer ? Math.max(0, (0.42 - presence) * 5) : 3 + (1 - presence) * 12).toFixed(2)}px`,
+    );
 
     group.rotation.y += ((progress * Math.PI * 5.2 + pointer.nx * 0.16) - group.rotation.y) * 0.048;
     group.rotation.x += ((-0.12 + pointer.ny * 0.1 + progress * 0.32) - group.rotation.x) * 0.048;
