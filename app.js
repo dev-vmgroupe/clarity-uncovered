@@ -385,10 +385,11 @@ const createDeviceScene = () => {
     const matureProgress = sectionProgress(matureSection);
     const matureTravel = smoothstep(0.12, 0.9, matureProgress);
     const maturePresence = inMature ? smoothstep(0.08, 0.22, matureProgress) * (1 - smoothstep(0.84, 0.98, matureProgress)) : 0;
-    const heroPresence = peak(viewportProgress, 0.2, 0.42) * 0.5;
+    const topHero = 1 - smoothstep(0.52, 1.05, viewportProgress);
+    const heroPresence = topHero * 0.86;
     const heroicSuppression = inHeroic ? 1 - smoothstep(0.02, 0.16, sectionProgress(heroicSection)) * (1 - smoothstep(0.86, 0.98, sectionProgress(heroicSection))) : 1;
     const presence = Math.min(0.96, Math.max(heroPresence, manifestoPresence * 0.88, maturePresence * 0.92) * heroicSuppression);
-    const frontLayer = (inManifesto && manifestoPresence > 0.08) || (inMature && maturePresence > 0.08);
+    const frontLayer = topHero > 0.08 || (inManifesto && manifestoPresence > 0.08) || (inMature && maturePresence > 0.08);
     const modelOpacity = presence > 0.16 ? Math.min(1, 0.78 + presence * 0.32) : presence * 2.2;
     root.style.setProperty("--model-presence", presence.toFixed(3));
     root.style.setProperty("--model-opacity", modelOpacity.toFixed(3));
@@ -402,7 +403,13 @@ const createDeviceScene = () => {
     let targetRotX = -0.12 + pointer.ny * 0.08;
     let targetRotZ = pointer.nx * -0.04;
 
-    if (inManifesto) {
+    if (topHero > 0.08) {
+      targetX = mix(mobile ? 0.28 : 0.42, mobile ? 1.8 : 3.8, 1 - topHero);
+      targetY = 0.02 + Math.sin(time * 0.001) * 0.045;
+      targetRotY = Math.PI * 0.42 + pointer.nx * 0.1 + Math.sin(time * 0.00055) * 0.12;
+      targetRotX = -0.18 + pointer.ny * 0.06;
+      targetRotZ = -0.05 + Math.sin(time * 0.0004) * 0.035;
+    } else if (inManifesto) {
       targetX = mix(mobile ? -1.8 : -3.0, mobile ? 1.8 : 3.0, manifestoTravel);
       targetY = mix(0.34, -0.18, manifestoTravel) + Math.sin(manifestoTravel * Math.PI) * 0.34;
       targetRotY = mix(-Math.PI * 0.9, Math.PI * 1.1, manifestoTravel);
