@@ -50,19 +50,29 @@ document.querySelectorAll("a, button, .flip-card").forEach((item) => {
   item.addEventListener("pointerleave", () => root.style.setProperty("--cursor-scale", "1"));
 });
 
-const updateScroll = () => {
+let scrollFrame = 0;
+
+const renderScrollState = () => {
   const scrollable = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
   root.style.setProperty("--scroll", `${window.scrollY / scrollable}`);
   updateManifesto();
   updateScrollVisuals();
 };
 
-updateScroll();
-window.addEventListener("scroll", updateScroll, { passive: true });
-window.addEventListener("resize", updateScroll);
-window.addEventListener("load", updateScroll);
-window.addEventListener("hashchange", () => requestAnimationFrame(updateScroll));
-setTimeout(updateScroll, 250);
+const requestScrollRender = () => {
+  if (scrollFrame) return;
+  scrollFrame = requestAnimationFrame(() => {
+    scrollFrame = 0;
+    renderScrollState();
+  });
+};
+
+renderScrollState();
+window.addEventListener("scroll", requestScrollRender, { passive: true });
+window.addEventListener("resize", requestScrollRender);
+window.addEventListener("load", requestScrollRender);
+window.addEventListener("hashchange", requestScrollRender);
+setTimeout(requestScrollRender, 250);
 
 function updateManifesto() {
   if (!manifesto || !manifestoLines.length) return;
