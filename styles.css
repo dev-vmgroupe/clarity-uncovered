@@ -24,18 +24,33 @@
 
 html {
   min-width: 300px;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  overflow-x: clip;
   scroll-behavior: smooth;
 }
 
 body {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
   min-width: 300px;
   margin: 0;
   overflow-x: hidden;
+  overflow-x: clip;
   background:
     radial-gradient(circle at var(--mx) var(--my), rgba(213, 237, 241, 0.95), transparent 24rem),
     linear-gradient(135deg, #fff 0%, #f8fcfd 42%, #edf8fb 100%);
   color: var(--ink);
   cursor: none;
+}
+
+main {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 body::before {
@@ -193,6 +208,9 @@ nav a:hover,
 
 .section-panel {
   position: relative;
+  max-width: 100vw;
+  overflow-x: hidden;
+  overflow-x: clip;
   min-height: 100svh;
   padding: clamp(6.5rem, 11vw, 10rem) clamp(1rem, 4vw, 4rem);
 }
@@ -404,7 +422,8 @@ h1 {
   min-height: 640svh;
   padding-top: 0;
   padding-bottom: 0;
-  overflow: visible;
+  overflow-x: clip;
+  overflow-y: visible;
 }
 
 .manifesto .section-kicker {
@@ -1133,6 +1152,14 @@ h2 {
 }
 
 @media (max-width: 640px) {
+  html,
+  body,
+  main {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: clip;
+  }
+
   body {
     cursor: auto;
   }
@@ -1144,6 +1171,8 @@ h2 {
   .site-header {
     top: max(10px, env(safe-area-inset-top));
     width: min(100% - 20px, 440px);
+    max-width: calc(100vw - 20px);
+    overflow: hidden;
     padding: 0.55rem;
   }
 
@@ -1194,6 +1223,14 @@ h2 {
   .manifesto {
     min-height: 620svh;
     padding-top: 0;
+    overflow-x: clip;
+  }
+
+  .manifesto-assets,
+  .asset-cloud,
+  .model-shell {
+    max-width: 100vw;
+    overflow: clip;
   }
 
   .manifesto-lines span {
@@ -1207,24 +1244,24 @@ h2 {
   }
 
   .manifesto-assets img:nth-child(1) {
-    left: -40vw;
+    left: -32vw;
     top: 12svh;
   }
 
   .manifesto-assets img:nth-child(2) {
-    right: -42vw;
+    right: -34vw;
     top: 10svh;
     width: clamp(220px, 70vw, 390px);
   }
 
   .manifesto-assets img:nth-child(3) {
-    left: -30vw;
+    left: -24vw;
     bottom: 4svh;
     width: clamp(220px, 70vw, 390px);
   }
 
   .manifesto-assets img:nth-child(4) {
-    right: -26vw;
+    right: -20vw;
     bottom: -2svh;
     width: clamp(210px, 66vw, 370px);
   }
