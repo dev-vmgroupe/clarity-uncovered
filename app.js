@@ -129,8 +129,14 @@ function updateScrollVisuals() {
 
   if (matureVisual) {
     const progress = sectionProgress(matureVisual.closest(".mature-visual"));
-    root.style.setProperty("--mature-y", `${((0.5 - progress) * 14).toFixed(2)}vh`);
-    root.style.setProperty("--mature-scale", (1.08 - Math.abs(progress - 0.5) * 0.12).toFixed(3));
+    const focus = 44 + progress * 16 + pointer.nx * 3;
+    root.style.setProperty("--mature-focus-x", `${focus.toFixed(2)}%`);
+    root.style.setProperty("--mature-x", `${((0.5 - progress) * 4).toFixed(2)}vw`);
+    root.style.setProperty("--mature-y", `${((0.5 - progress) * 10).toFixed(2)}vh`);
+    root.style.setProperty("--mature-scale", (1.08 + progress * 0.12).toFixed(3));
+    root.style.setProperty("--mature-radar", (0.35 + progress * 0.45).toFixed(3));
+    root.style.setProperty("--mature-radar-scale", (0.82 + progress * 0.44).toFixed(3));
+    root.style.setProperty("--mature-card-y", `${((0.5 - progress) * 28).toFixed(2)}px`);
   }
 }
 
