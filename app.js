@@ -21,6 +21,11 @@ const heroicDevice = document.querySelector(".heroic-device");
 const matureVisual = document.querySelector(".mature-visual img");
 let manifestoProgress = 0;
 
+const smoothValue = (edge0, edge1, value) => {
+  const t = Math.min(1, Math.max(0, (value - edge0) / Math.max(0.0001, edge1 - edge0)));
+  return t * t * (3 - 2 * t);
+};
+
 const setPointer = (x, y) => {
   pointer.x = x;
   pointer.y = y;
@@ -71,13 +76,24 @@ function updateManifesto() {
     const distance = Math.abs(index - exact);
     const crispHold = 0.38;
     const fadeWidth = 0.28;
-    const visibility = Math.max(0, 1 - Math.max(0, distance - crispHold) / fadeWidth);
+    let visibility = Math.max(0, 1 - Math.max(0, distance - crispHold) / fadeWidth);
     const direction = index - exact;
-    const blur = 38 * Math.pow(1 - visibility, 1.25);
-    const y = direction * 42;
-    const z = -150 * (1 - visibility);
-    const scale = 0.95 + visibility * 0.05;
-    const rotate = direction * 5;
+    let blur = 38 * Math.pow(1 - visibility, 1.25);
+    let y = direction * 42;
+    let z = -150 * (1 - visibility);
+    let scale = 0.95 + visibility * 0.05;
+    let rotate = direction * 5;
+
+    if (index === manifestoLines.length - 1 && exact > manifestoLines.length - 2.2) {
+      const heroProgress = sectionProgress(heroicDevice?.closest(".heroic-showcase"));
+      const fadeAfterCross = smoothValue(0.5, 0.78, heroProgress);
+      visibility = 1 - fadeAfterCross;
+      blur = 32 * fadeAfterCross;
+      y = -8 * heroProgress;
+      z = 0;
+      scale = 1;
+      rotate = 0;
+    }
 
     line.classList.toggle("is-active", distance <= crispHold);
     line.style.opacity = visibility.toFixed(3);
@@ -243,6 +259,31 @@ const createDeviceScene = () => {
   redPulse.position.set(0, -1, 2);
   scene.add(redPulse);
 
+  const glowCanvas = document.createElement("canvas");
+  glowCanvas.width = 256;
+  glowCanvas.height = 256;
+  const glowContext = glowCanvas.getContext("2d");
+  const glowGradient = glowContext.createRadialGradient(128, 128, 4, 128, 128, 128);
+  glowGradient.addColorStop(0, "rgba(255, 42, 18, 1)");
+  glowGradient.addColorStop(0.24, "rgba(255, 31, 18, 0.72)");
+  glowGradient.addColorStop(0.56, "rgba(255, 24, 18, 0.22)");
+  glowGradient.addColorStop(1, "rgba(255, 24, 18, 0)");
+  glowContext.fillStyle = glowGradient;
+  glowContext.fillRect(0, 0, 256, 256);
+  const redGlowTexture = new THREE.CanvasTexture(glowCanvas);
+  const redGlowSprite = new THREE.Sprite(
+    new THREE.SpriteMaterial({
+      map: redGlowTexture,
+      color: 0xff1508,
+      transparent: true,
+      opacity: 0,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+    }),
+  );
+  redGlowSprite.position.set(0, -0.36, 0.82);
+  redGlowSprite.scale.set(0.7, 0.7, 0.7);
+
   const loader = new GLTFLoader();
   let modelLoaded = false;
   const redMaterials = [];
@@ -298,6 +339,7 @@ const createDeviceScene = () => {
       });
 
       group.add(model);
+      group.add(redGlowSprite);
       modelLoaded = true;
       canvas.classList.add("is-loaded");
     },
@@ -392,6 +434,11 @@ const createDeviceScene = () => {
     const facingCamera = Math.pow((Math.cos(group.rotation.y) + 1) / 2, 2.4);
     const redGlow = presence * (1.6 + facingCamera * 14);
     redPulse.intensity += (redGlow - redPulse.intensity) * 0.06;
+    const spriteGlow = presence * (0.16 + facingCamera * 0.84);
+    redGlowSprite.material.opacity += (spriteGlow - redGlowSprite.material.opacity) * 0.08;
+    const spriteScale = 0.42 + facingCamera * presence * 0.72;
+    redGlowSprite.scale.lerp(new THREE.Vector3(spriteScale, spriteScale, spriteScale), 0.08);
+    redGlowSprite.position.set(0, -0.36, 0.82 + facingCamera * 0.08);
     redMaterials.forEach((material) => {
       material.emissiveIntensity = 0.45 + facingCamera * presence * 4.4;
     });

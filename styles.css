@@ -517,11 +517,11 @@ h1 {
 .heroic-showcase {
   position: relative;
   z-index: 3;
-  min-height: 175svh;
+  min-height: 115svh;
   display: grid;
   place-items: center;
   overflow: clip;
-  margin-top: -95svh;
+  margin-top: -85svh;
   padding-block: 0;
   background: transparent;
   pointer-events: none;
