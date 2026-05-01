@@ -222,7 +222,7 @@ nav a:hover,
 }
 
 #device-canvas.is-loaded {
-  opacity: var(--model-presence, 0);
+  opacity: var(--model-opacity, 0);
 }
 
 .model-fallback {
@@ -523,7 +523,7 @@ h1 {
 }
 
 .heroic-device {
-  width: min(92vw, 920px);
+  width: min(50vw, 560px);
   max-width: none;
   filter: drop-shadow(0 60px 95px rgba(0, 65, 95, 0.18));
   transform:
@@ -1131,7 +1131,7 @@ h2 {
   }
 
   .heroic-device {
-    width: 132vw;
+    width: min(64vw, 310px);
   }
 
   .mature-visual {

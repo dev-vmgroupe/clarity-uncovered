@@ -88,18 +88,19 @@ function updateManifesto() {
   manifestoAssets.forEach((asset, index) => {
     const assetTargets = [0.09, 0.29, 0.49, 0.68, 0.86];
     const target = assetTargets[index] ?? (index + 1) / (manifestoAssets.length + 1);
-    const windowWidth = 0.14;
     const distance = Math.abs(manifestoProgress - target);
-    const visibility = Math.max(0, 1 - distance / windowWidth);
+    const sharpHold = 0.075;
+    const fadeWidth = 0.16;
+    const visibility = Math.max(0, 1 - Math.max(0, distance - sharpHold) / fadeWidth);
     const drift = (manifestoProgress * 2 - 1) * 80;
     const side = index % 2 === 0 ? -1 : 1;
 
-    asset.style.setProperty("--asset-opacity", (visibility * 0.84).toFixed(3));
-    asset.style.setProperty("--asset-blur", `${(24 * (1 - visibility)).toFixed(2)}px`);
-    asset.style.setProperty("--asset-scale", (0.82 + visibility * 0.34).toFixed(3));
-    asset.style.setProperty("--asset-x", `${(side * (1 - visibility) * 150 + drift * side * 0.24).toFixed(2)}px`);
-    asset.style.setProperty("--asset-y", `${((1 - visibility) * 130 - visibility * 26).toFixed(2)}px`);
-    asset.style.setProperty("--asset-rotate", `${(side * (10 - visibility * 13)).toFixed(2)}deg`);
+    asset.style.setProperty("--asset-opacity", (visibility * 0.9).toFixed(3));
+    asset.style.setProperty("--asset-blur", `${(18 * Math.pow(1 - visibility, 1.35)).toFixed(2)}px`);
+    asset.style.setProperty("--asset-scale", (0.86 + visibility * 0.3).toFixed(3));
+    asset.style.setProperty("--asset-x", `${(side * (1 - visibility) * 120 + drift * side * 0.2).toFixed(2)}px`);
+    asset.style.setProperty("--asset-y", `${((1 - visibility) * 100 - visibility * 18).toFixed(2)}px`);
+    asset.style.setProperty("--asset-rotate", `${(side * (8 - visibility * 10)).toFixed(2)}deg`);
   });
 }
 
@@ -119,11 +120,11 @@ function isSectionActive(element, offset = 0) {
 function updateScrollVisuals() {
   if (heroicDevice) {
     const progress = sectionProgress(heroicDevice.closest(".heroic-showcase"));
-    const eased = 1 - Math.pow(1 - progress, 2);
-    root.style.setProperty("--heroic-scale", (0.82 + eased * 0.74).toFixed(3));
-    root.style.setProperty("--heroic-x", `${((0.5 - progress) * 28).toFixed(2)}vw`);
-    root.style.setProperty("--heroic-y", `${((0.5 - progress) * 26).toFixed(2)}vh`);
-    root.style.setProperty("--heroic-rotate", `${(-7 + progress * 14).toFixed(2)}deg`);
+    const eased = 1 - Math.pow(1 - progress, 2.2);
+    root.style.setProperty("--heroic-scale", (0.74 + eased * 0.36).toFixed(3));
+    root.style.setProperty("--heroic-x", `${((0.5 - progress) * 10).toFixed(2)}vw`);
+    root.style.setProperty("--heroic-y", `${((1 - progress) * 48 - 12).toFixed(2)}vh`);
+    root.style.setProperty("--heroic-rotate", `${(-5 + progress * 8).toFixed(2)}deg`);
   }
 
   if (matureVisual) {
@@ -262,7 +263,7 @@ const createDeviceScene = () => {
       box.getSize(size);
       box.getCenter(center);
       model.position.sub(center);
-      model.scale.setScalar(2.1 / Math.max(size.x, size.y, size.z));
+      model.scale.setScalar(1.45 / Math.max(size.x, size.y, size.z));
 
       model.traverse((child) => {
         if (child.isMesh) {
@@ -310,6 +311,7 @@ const createDeviceScene = () => {
     const inHeroic = isSectionActive(document.querySelector(".heroic-showcase"), window.innerHeight * 0.08);
     const inMature = isSectionActive(document.querySelector(".mature-visual"), window.innerHeight * 0.12);
     const inProcess = isSectionActive(document.querySelector(".process"), window.innerHeight * 0.18);
+    const inProvider = isSectionActive(document.querySelector(".provider"), window.innerHeight * 0.16);
     const inDetails = isSectionActive(document.querySelector(".details"), window.innerHeight * 0.18);
     const inFaq = isSectionActive(document.querySelector(".faq"), window.innerHeight * 0.18);
     const inManifesto = manifesto
@@ -324,12 +326,15 @@ const createDeviceScene = () => {
       0.92,
       heroPresence +
         linePulse +
-        (inHeroic ? peak(sectionProgress(document.querySelector(".heroic-showcase")), 0.56, 0.24) * 0.72 : 0) +
-        (inProcess ? 0.42 : 0) +
+        (inHeroic ? peak(sectionProgress(document.querySelector(".heroic-showcase")), 0.56, 0.24) * 0.62 : 0) +
+        (inProvider ? peak(sectionProgress(document.querySelector(".provider")), 0.48, 0.35) * 0.58 : 0) +
+        (inProcess ? 0.48 : 0) +
         peak(progress, 0.7, 0.055) * 0.48,
     );
-    const frontLayer = inManifesto || inHeroic || inProcess || (!inDetails && !inMature && !inFaq && presence > 0.62);
+    const frontLayer = inManifesto || inHeroic || inProvider || inProcess || (!inDetails && !inMature && !inFaq && presence > 0.62);
+    const modelOpacity = presence > 0.16 ? Math.min(1, 0.78 + presence * 0.32) : presence * 2.2;
     root.style.setProperty("--model-presence", presence.toFixed(3));
+    root.style.setProperty("--model-opacity", modelOpacity.toFixed(3));
     root.style.setProperty("--model-layer", frontLayer ? "4" : "-2");
     root.style.setProperty(
       "--model-blur",
@@ -339,17 +344,21 @@ const createDeviceScene = () => {
     group.rotation.y += ((progress * Math.PI * 5.2 + pointer.nx * 0.16) - group.rotation.y) * 0.048;
     group.rotation.x += ((-0.12 + pointer.ny * 0.1 + progress * 0.32) - group.rotation.x) * 0.048;
     group.rotation.z += ((pointer.nx * -0.05 + Math.sin(time * 0.00045) * 0.025) - group.rotation.z) * 0.048;
-    group.position.x +=
-      (((mobile ? 0 : 0.9) * Math.sin(progress * Math.PI * 2.8) +
-        (1 - presence) * (mobile ? 0.75 : 1.35) -
-        pointer.nx * 0.08) -
-        group.position.x) *
-      0.04;
+    const heroicProgress = sectionProgress(document.querySelector(".heroic-showcase"));
+    const providerProgress = sectionProgress(document.querySelector(".provider"));
+    const variedX =
+      (mobile ? 0 : 1.35) * Math.sin(progress * Math.PI * 3.6) +
+      (mobile ? 0 : 0.95) * Math.sin(progress * Math.PI * 9.4 + 0.8) +
+      (inHeroic ? (heroicProgress - 0.5) * -5.4 : 0) +
+      (inProvider ? (0.5 - providerProgress) * 4.8 : 0) +
+      (presence < 0.22 ? (mobile ? 1.8 : 3.2) : 0) -
+      pointer.nx * 0.08;
+    group.position.x += (variedX - group.position.x) * 0.04;
     group.position.y +=
-      ((0.05 + Math.sin(time * 0.001 + progress * 8) * 0.12 - presence * 0.18) - group.position.y) *
+      ((0.05 + Math.sin(time * 0.001 + progress * 15) * 0.32 + Math.sin(progress * Math.PI * 4.5) * 0.38 - presence * 0.18) - group.position.y) *
       0.04;
 
-    const scale = (mobile ? 0.5 : 0.66) + presence * (mobile ? 0.2 : 0.24);
+    const scale = (mobile ? 0.33 : 0.39) + presence * (mobile ? 0.1 : 0.13);
     group.scale.lerp(new THREE.Vector3(scale, scale, scale), 0.045);
 
     redPulse.intensity = presence * (3.4 + Math.sin(time * 0.004) * 1.2);
