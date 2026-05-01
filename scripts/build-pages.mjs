@@ -75,6 +75,14 @@ async function optimizeImages() {
       continue;
     }
 
+    if (extension === ".webp") {
+      await pipeline.webp({ quality: 82, effort: 6 }).toFile(`${file}.tmp`);
+      await rm(file);
+      await cp(`${file}.tmp`, file);
+      await rm(`${file}.tmp`);
+      continue;
+    }
+
     const webpPath = file.replace(/\.(png|jpe?g)$/i, ".webp");
     const webpRelative = toPosix(path.relative(dist, webpPath));
     await pipeline.webp({ quality: 82, effort: 6 }).toFile(webpPath);
@@ -103,8 +111,20 @@ async function rewriteReferences() {
   }
 }
 
+async function removeUnreferencedSourceImages() {
+  const assetsDir = path.join(dist, "assets");
+  const entries = await readdir(assetsDir, { withFileTypes: true });
+
+  await Promise.all(
+    entries
+      .filter((entry) => entry.isFile() && imageExtensions.has(path.extname(entry.name).toLowerCase()))
+      .map((entry) => rm(path.join(assetsDir, entry.name))),
+  );
+}
+
 await copySource();
 await optimizeImages();
 await rewriteReferences();
+await removeUnreferencedSourceImages();
 
 console.log("Built optimized GitHub Pages artifact in dist/");

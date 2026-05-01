@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "python3 -m http.server 4173",
+    "compress:assets": "node scripts/compress-assets.mjs",
     "build": "node scripts/build-pages.mjs",
     "predeploy": "npm run build"
   },
