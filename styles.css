@@ -401,10 +401,10 @@ h1 {
 
 .manifesto {
   display: block;
-  min-height: 720svh;
+  min-height: 640svh;
   padding-top: 0;
   padding-bottom: 0;
-  overflow: clip;
+  overflow: visible;
 }
 
 .manifesto .section-kicker {
@@ -517,11 +517,11 @@ h1 {
 .heroic-showcase {
   position: relative;
   z-index: 3;
-  min-height: 115svh;
+  min-height: 92svh;
   display: grid;
   place-items: center;
   overflow: clip;
-  margin-top: -85svh;
+  margin-top: -112svh;
   padding-block: 0;
   background: transparent;
   pointer-events: none;
@@ -1192,7 +1192,7 @@ h2 {
   }
 
   .manifesto {
-    min-height: 680svh;
+    min-height: 620svh;
     padding-top: 0;
   }
 
@@ -1240,7 +1240,8 @@ h2 {
   }
 
   .heroic-showcase {
-    min-height: 115svh;
+    min-height: 86svh;
+    margin-top: -104svh;
   }
 
   .heroic-device {
