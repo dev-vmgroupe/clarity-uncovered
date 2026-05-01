@@ -121,10 +121,10 @@ function updateScrollVisuals() {
   if (heroicDevice) {
     const progress = sectionProgress(heroicDevice.closest(".heroic-showcase"));
     const eased = 1 - Math.pow(1 - progress, 2.2);
-    root.style.setProperty("--heroic-scale", (0.74 + eased * 0.36).toFixed(3));
-    root.style.setProperty("--heroic-x", `${((0.5 - progress) * 10).toFixed(2)}vw`);
-    root.style.setProperty("--heroic-y", `${((1 - progress) * 48 - 12).toFixed(2)}vh`);
-    root.style.setProperty("--heroic-rotate", `${(-5 + progress * 8).toFixed(2)}deg`);
+    root.style.setProperty("--heroic-scale", (0.78 + eased * 0.42).toFixed(3));
+    root.style.setProperty("--heroic-x", `${((0.5 - progress) * 6).toFixed(2)}vw`);
+    root.style.setProperty("--heroic-y", `${((1 - progress) * 62 - 30).toFixed(2)}vh`);
+    root.style.setProperty("--heroic-rotate", `${(-4 + progress * 7).toFixed(2)}deg`);
   }
 
   if (matureVisual) {
@@ -246,6 +246,7 @@ const createDeviceScene = () => {
   const loader = new GLTFLoader();
   let modelLoaded = false;
   const redMaterials = [];
+  const glowMaterials = [];
 
   const softenMaterial = (material) => {
     if (!material) return;
@@ -259,9 +260,12 @@ const createDeviceScene = () => {
     material.envMapIntensity = 0.72;
     const color = material.color;
     const isRedMaterial = color && color.r > color.g * 1.35 && color.r > color.b * 1.35;
-    if (isRedMaterial && "emissive" in material) {
-      material.emissive.setRGB(0.75, 0.04, 0.02);
-      redMaterials.push(material);
+    if ("emissive" in material) {
+      glowMaterials.push(material);
+      if (isRedMaterial) {
+        material.emissive.setRGB(0.95, 0.05, 0.02);
+        redMaterials.push(material);
+      }
     }
     material.needsUpdate = true;
   };
@@ -347,10 +351,8 @@ const createDeviceScene = () => {
     root.style.setProperty("--model-presence", presence.toFixed(3));
     root.style.setProperty("--model-opacity", modelOpacity.toFixed(3));
     root.style.setProperty("--model-layer", frontLayer ? "4" : "-2");
-    root.style.setProperty(
-      "--model-blur",
-      `${(frontLayer ? Math.max(0, (0.42 - presence) * 5) : 3 + (1 - presence) * 12).toFixed(2)}px`,
-    );
+    const visibleBlur = presence > 0.12 ? 0 : 10 * (1 - presence);
+    root.style.setProperty("--model-blur", `${visibleBlur.toFixed(2)}px`);
 
     let targetX = mobile ? 1.8 : 3.8;
     let targetY = mobile ? 0.35 : 0.15;
@@ -387,12 +389,24 @@ const createDeviceScene = () => {
     const scale = (mobile ? 0.33 : 0.39) + presence * (mobile ? 0.1 : 0.13);
     group.scale.lerp(new THREE.Vector3(scale, scale, scale), 0.035);
 
-    const facingCamera = Math.pow(Math.max(0, Math.cos(group.rotation.y)), 2.2);
-    const redGlow = presence * (0.8 + facingCamera * 6.5);
+    const facingCamera = Math.pow((Math.cos(group.rotation.y) + 1) / 2, 2.4);
+    const redGlow = presence * (1.6 + facingCamera * 14);
     redPulse.intensity += (redGlow - redPulse.intensity) * 0.06;
     redMaterials.forEach((material) => {
-      material.emissiveIntensity = 0.12 + facingCamera * presence * 1.9;
+      material.emissiveIntensity = 0.45 + facingCamera * presence * 4.4;
     });
+    if (!redMaterials.length) {
+      glowMaterials.forEach((material) => {
+        material.emissive.setRGB(0.45, 0.02, 0.01);
+        material.emissiveIntensity = facingCamera * presence * 0.9;
+      });
+    }
+    redPulse.position.set(
+      group.position.x + Math.sin(group.rotation.y) * 0.8,
+      group.position.y - 0.25,
+      2.2 + Math.cos(group.rotation.y) * 0.7,
+    );
+    redPulse.color.setRGB(1, 0.05 + facingCamera * 0.12, 0.02);
     rim.position.x = -3.5 + pointer.nx * 1.5;
     rim.position.y = 1.5 - pointer.ny * 1.2;
 

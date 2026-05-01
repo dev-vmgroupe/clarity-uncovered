@@ -217,7 +217,7 @@ nav a:hover,
   width: 100%;
   height: 100%;
   opacity: 0;
-  filter: blur(var(--model-blur, 18px));
+  filter: blur(var(--model-blur, 0px));
   transition: opacity 260ms linear, filter 260ms linear;
 }
 
@@ -515,15 +515,20 @@ h1 {
 }
 
 .heroic-showcase {
-  min-height: 150svh;
+  position: relative;
+  z-index: 3;
+  min-height: 175svh;
   display: grid;
   place-items: center;
   overflow: clip;
-  padding-block: clamp(4rem, 9vw, 8rem);
+  margin-top: -95svh;
+  padding-block: 0;
+  background: transparent;
+  pointer-events: none;
 }
 
 .heroic-device {
-  width: min(50vw, 560px);
+  width: min(50vw, 300px);
   max-width: none;
   filter: drop-shadow(0 60px 95px rgba(0, 65, 95, 0.18));
   transform:
@@ -1239,7 +1244,7 @@ h2 {
   }
 
   .heroic-device {
-    width: min(64vw, 310px);
+    width: min(58vw, 240px);
   }
 
   .mature-visual {
