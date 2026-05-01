@@ -421,9 +421,9 @@ const createDeviceScene = () => {
     if (topHero > 0.08) {
       targetX = mix(mobile ? 0.28 : 0.42, mobile ? 1.8 : 3.8, 1 - topHero);
       targetY = 0.02 + Math.sin(time * 0.001) * 0.045;
-      targetRotY = Math.PI * 0.42 + pointer.nx * 0.1 + Math.sin(time * 0.00055) * 0.12;
-      targetRotX = -0.18 + pointer.ny * 0.06;
-      targetRotZ = -0.05 + Math.sin(time * 0.0004) * 0.035;
+      targetRotY = Math.PI * 0.92 + pointer.nx * 0.08 + Math.sin(time * 0.00055) * 0.08;
+      targetRotX = -0.08 + pointer.ny * 0.05;
+      targetRotZ = -0.02 + Math.sin(time * 0.0004) * 0.025;
     } else if (inManifesto) {
       targetX = mix(mobile ? -1.8 : -3.0, mobile ? 1.8 : 3.0, manifestoTravel);
       targetY = mix(0.34, -0.18, manifestoTravel) + Math.sin(manifestoTravel * Math.PI) * 0.34;
