@@ -507,6 +507,12 @@ h1 {
   width: clamp(280px, 36vw, 580px);
 }
 
+.manifesto-assets img:nth-child(5) {
+  left: 50%;
+  top: -12svh;
+  width: clamp(300px, 40vw, 640px);
+}
+
 .details {
   display: grid;
   align-content: center;
@@ -579,6 +585,13 @@ h2 {
   bottom: 4%;
   height: clamp(240px, 34vw, 540px);
   transform: rotate(8deg);
+}
+
+.asset-cloud img:nth-child(4) {
+  right: 10%;
+  bottom: 2%;
+  height: clamp(220px, 30vw, 500px);
+  transform: rotate(-5deg);
 }
 
 .flip-card {
@@ -902,6 +915,12 @@ h2 {
   .manifesto-assets img:nth-child(4) {
     right: -26vw;
     bottom: -2svh;
+    width: clamp(210px, 66vw, 370px);
+  }
+
+  .manifesto-assets img:nth-child(5) {
+    left: 22vw;
+    top: -8svh;
     width: clamp(210px, 66vw, 370px);
   }
 

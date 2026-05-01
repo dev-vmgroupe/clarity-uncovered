@@ -83,7 +83,7 @@ function updateManifesto() {
   });
 
   manifestoAssets.forEach((asset, index) => {
-    const assetTargets = [0.1, 0.33, 0.58, 0.82];
+    const assetTargets = [0.09, 0.29, 0.49, 0.68, 0.86];
     const target = assetTargets[index] ?? (index + 1) / (manifestoAssets.length + 1);
     const windowWidth = 0.14;
     const distance = Math.abs(manifestoProgress - target);
