@@ -495,13 +495,15 @@ h1 {
   border: 1px solid rgba(0, 82, 149, 0.18);
   border-radius: clamp(28px, 4vw, 58px);
   box-shadow: 0 54px 140px rgba(0, 65, 95, 0.22);
-  filter: saturate(0.96) contrast(1.04) blur(var(--asset-blur, 28px));
+  filter: saturate(0.96) contrast(1.04);
   opacity: var(--asset-opacity, 0);
   transform: translate3d(var(--asset-x, 0), var(--asset-y, 0), 0)
     rotate(var(--asset-rotate, 0deg))
     scale(var(--asset-scale, 0.86));
   transform-origin: center;
-  will-change: opacity, filter, transform;
+  backface-visibility: hidden;
+  contain: layout paint;
+  will-change: opacity, transform;
 }
 
 .manifesto-assets img:nth-child(1) {

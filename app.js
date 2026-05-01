@@ -135,10 +135,9 @@ function updateManifesto() {
     const side = index % 2 === 0 ? -1 : 1;
 
     asset.style.setProperty("--asset-opacity", (visibility * 0.9).toFixed(3));
-    asset.style.setProperty("--asset-blur", `${(18 * Math.pow(1 - visibility, 1.35)).toFixed(2)}px`);
     asset.style.setProperty("--asset-scale", (0.86 + visibility * 0.3).toFixed(3));
-    asset.style.setProperty("--asset-x", `${(side * (1 - visibility) * 120 + drift * side * 0.2).toFixed(2)}px`);
-    asset.style.setProperty("--asset-y", `${((1 - visibility) * 100 - visibility * 18).toFixed(2)}px`);
+    asset.style.setProperty("--asset-x", `${Math.round(side * (1 - visibility) * 120 + drift * side * 0.2)}px`);
+    asset.style.setProperty("--asset-y", `${Math.round((1 - visibility) * 100 - visibility * 18)}px`);
     asset.style.setProperty("--asset-rotate", `${(side * (8 - visibility * 10)).toFixed(2)}deg`);
   });
 }
