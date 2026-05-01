@@ -84,19 +84,23 @@ function updateManifesto() {
     let scale = 0.95 + visibility * 0.05;
     let rotate = direction * 5;
 
-    if (index === manifestoLines.length - 1 && exact > manifestoLines.length - 2.2) {
+    const penultimateIndex = manifestoLines.length - 2;
+    const finalIndex = manifestoLines.length - 1;
+
+    if (index === finalIndex && exact > penultimateIndex + 0.28) {
       const heroProgress = sectionProgress(heroicDevice?.closest(".heroic-showcase"));
       const fadeAfterCross = smoothValue(0.5, 0.78, heroProgress);
-      visibility = 1 - fadeAfterCross;
-      blur = 32 * fadeAfterCross;
+      const fadeInAfterPreviousLine = smoothValue(penultimateIndex + 0.28, penultimateIndex + 0.58, exact);
+      visibility = fadeInAfterPreviousLine * (1 - fadeAfterCross);
+      blur = 32 * (1 - visibility);
       y = -8 * heroProgress;
       z = 0;
       scale = 1;
       rotate = 0;
     }
 
-    if (index === manifestoLines.length - 2 && exact > manifestoLines.length - 2.05) {
-      visibility = Math.max(0, 1 - smoothValue(manifestoLines.length - 2.05, manifestoLines.length - 1.48, exact));
+    if (index === penultimateIndex && exact > penultimateIndex - 0.3) {
+      visibility = Math.max(0, 1 - smoothValue(penultimateIndex - 0.3, penultimateIndex + 0.08, exact));
       blur = 34 * (1 - visibility);
       y = -34 * (1 - visibility);
       z = -90 * (1 - visibility);

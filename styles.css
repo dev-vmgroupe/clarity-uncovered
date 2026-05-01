@@ -141,9 +141,9 @@ a {
   width: clamp(112px, 14vw, 146px);
   height: 44px;
   padding: 0 14px;
-  border-radius: 999px;
-  background: var(--paper);
-  overflow: hidden;
+  border-radius: 0;
+  background: transparent;
+  overflow: visible;
 }
 
 .brand img {
