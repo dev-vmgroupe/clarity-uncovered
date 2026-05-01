@@ -470,11 +470,11 @@ h1 {
 
 .manifesto-assets img {
   position: absolute;
-  width: clamp(280px, 42vw, 680px);
+  width: clamp(340px, 52vw, 820px);
   max-width: none;
   border: 1px solid rgba(0, 82, 149, 0.18);
   border-radius: clamp(28px, 4vw, 58px);
-  box-shadow: 0 44px 120px rgba(0, 65, 95, 0.18);
+  box-shadow: 0 54px 140px rgba(0, 65, 95, 0.22);
   filter: saturate(0.96) contrast(1.04) blur(var(--asset-blur, 28px));
   opacity: var(--asset-opacity, 0);
   transform: translate3d(var(--asset-x, 0), var(--asset-y, 0), 0)
@@ -485,26 +485,26 @@ h1 {
 }
 
 .manifesto-assets img:nth-child(1) {
-  left: -9vw;
-  top: 13svh;
+  left: -11vw;
+  top: 8svh;
 }
 
 .manifesto-assets img:nth-child(2) {
-  right: -8vw;
-  top: 8svh;
-  width: clamp(250px, 34vw, 540px);
+  right: -10vw;
+  top: 4svh;
+  width: clamp(300px, 39vw, 620px);
 }
 
 .manifesto-assets img:nth-child(3) {
-  left: 4vw;
-  bottom: 0;
-  width: clamp(250px, 31vw, 520px);
+  left: 0;
+  bottom: -2svh;
+  width: clamp(300px, 38vw, 620px);
 }
 
 .manifesto-assets img:nth-child(4) {
-  right: 8vw;
-  bottom: -8svh;
-  width: clamp(230px, 29vw, 500px);
+  right: 2vw;
+  bottom: -10svh;
+  width: clamp(280px, 36vw, 580px);
 }
 
 .details {
@@ -878,31 +878,31 @@ h2 {
   }
 
   .manifesto-assets img {
-    width: clamp(210px, 72vw, 420px);
+    width: clamp(230px, 82vw, 460px);
     border-radius: 30px;
   }
 
   .manifesto-assets img:nth-child(1) {
-    left: -34vw;
-    top: 18svh;
+    left: -40vw;
+    top: 12svh;
   }
 
   .manifesto-assets img:nth-child(2) {
-    right: -36vw;
-    top: 12svh;
-    width: clamp(190px, 58vw, 340px);
+    right: -42vw;
+    top: 10svh;
+    width: clamp(220px, 70vw, 390px);
   }
 
   .manifesto-assets img:nth-child(3) {
-    left: -22vw;
+    left: -30vw;
     bottom: 4svh;
-    width: clamp(190px, 58vw, 340px);
+    width: clamp(220px, 70vw, 390px);
   }
 
   .manifesto-assets img:nth-child(4) {
-    right: -18vw;
+    right: -26vw;
     bottom: -2svh;
-    width: clamp(180px, 54vw, 320px);
+    width: clamp(210px, 66vw, 370px);
   }
 
   .asset-cloud img {

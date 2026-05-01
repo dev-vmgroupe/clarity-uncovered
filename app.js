@@ -66,33 +66,37 @@ function updateManifesto() {
 
   manifestoLines.forEach((line, index) => {
     const distance = Math.abs(index - exact);
-    const visibility = Math.max(0, 1 - distance * 1.55);
+    const crispHold = 0.38;
+    const fadeWidth = 0.28;
+    const visibility = Math.max(0, 1 - Math.max(0, distance - crispHold) / fadeWidth);
     const direction = index - exact;
-    const blur = 46 * (1 - visibility);
-    const y = direction * 86;
-    const z = -260 * (1 - visibility);
-    const scale = 0.9 + visibility * 0.1;
-    const rotate = direction * 18;
+    const blur = 38 * Math.pow(1 - visibility, 1.25);
+    const y = direction * 42;
+    const z = -150 * (1 - visibility);
+    const scale = 0.95 + visibility * 0.05;
+    const rotate = direction * 5;
 
-    line.classList.toggle("is-active", visibility > 0.82);
+    line.classList.toggle("is-active", distance <= crispHold);
     line.style.opacity = visibility.toFixed(3);
     line.style.filter = `blur(${blur.toFixed(2)}px)`;
     line.style.transform = `translate3d(0, ${y.toFixed(2)}px, ${z.toFixed(2)}px) scale(${scale.toFixed(3)}) rotateX(${rotate.toFixed(2)}deg)`;
   });
 
   manifestoAssets.forEach((asset, index) => {
-    const normalized = manifestoProgress * manifestoLines.length;
-    const cycleDistance = Math.abs(((normalized - index) % manifestoAssets.length + manifestoAssets.length / 2) % manifestoAssets.length - manifestoAssets.length / 2);
-    const visibility = Math.max(0, 1 - cycleDistance * 0.72);
+    const assetTargets = [0.1, 0.33, 0.58, 0.82];
+    const target = assetTargets[index] ?? (index + 1) / (manifestoAssets.length + 1);
+    const windowWidth = 0.14;
+    const distance = Math.abs(manifestoProgress - target);
+    const visibility = Math.max(0, 1 - distance / windowWidth);
     const drift = (manifestoProgress * 2 - 1) * 80;
     const side = index % 2 === 0 ? -1 : 1;
 
-    asset.style.setProperty("--asset-opacity", (visibility * 0.72).toFixed(3));
-    asset.style.setProperty("--asset-blur", `${(22 * (1 - visibility)).toFixed(2)}px`);
-    asset.style.setProperty("--asset-scale", (0.9 + visibility * 0.24).toFixed(3));
-    asset.style.setProperty("--asset-x", `${(side * (1 - visibility) * 90 + drift * side * 0.22).toFixed(2)}px`);
-    asset.style.setProperty("--asset-y", `${((1 - visibility) * 90 - visibility * 18).toFixed(2)}px`);
-    asset.style.setProperty("--asset-rotate", `${(side * (7 - visibility * 10)).toFixed(2)}deg`);
+    asset.style.setProperty("--asset-opacity", (visibility * 0.84).toFixed(3));
+    asset.style.setProperty("--asset-blur", `${(24 * (1 - visibility)).toFixed(2)}px`);
+    asset.style.setProperty("--asset-scale", (0.82 + visibility * 0.34).toFixed(3));
+    asset.style.setProperty("--asset-x", `${(side * (1 - visibility) * 150 + drift * side * 0.24).toFixed(2)}px`);
+    asset.style.setProperty("--asset-y", `${((1 - visibility) * 130 - visibility * 26).toFixed(2)}px`);
+    asset.style.setProperty("--asset-rotate", `${(side * (10 - visibility * 13)).toFixed(2)}deg`);
   });
 }
 
